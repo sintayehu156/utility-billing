@@ -1,21 +1,21 @@
 # Copyright (c) 2025, Navari Ltd and contributors
 # For license information, please see license.txt
 
-import frappe
-from frappe import _
-from frappe.utils import today, date_diff, flt
 from collections import defaultdict
 from datetime import datetime
+
+import frappe
+from frappe import _
+from frappe.utils import add_months, date_diff, flt, today
 
 
 def execute(filters=None):
     columns = get_columns()
     data = get_data(filters)
-    # summary = get_report_summary(data, filters)
-    
-    # chart = get_chart_data(data, filters)
-    
-    return columns, data, None, None, None
+    summary = get_report_summary(data, filters)
+    chart = get_chart_data(data, filters)
+
+    return columns, data, None, chart, summary
 
 def get_columns():
     return [
@@ -147,11 +147,11 @@ def get_data(filters):
 
 def get_conditions(filters):
     conditions = []
-    
+
     if not isinstance(filters, dict):
         try:
             filters = frappe.parse_json(filters)
-        except:
+        except Exception:
             filters = {}
 
     if filters.get("from_date"):
@@ -181,7 +181,7 @@ def get_conditions(filters):
 def get_report_summary(data, filters):
     if not data:
         return []
-    
+
     status_labels = {
         "Draft": _("Draft"),
         "On Hold": _("On Hold"),
@@ -192,34 +192,34 @@ def get_report_summary(data, filters):
         "Cancelled": _("Cancelled"),
         "Closed": _("Closed")
     }
-    
+
     request_status_labels = {
         "Site Survey Created": _("Survey Created"),
         "Site Survey Completed": _("Survey Completed"),
         "BOM Created": _("BOM Created"),
         "BOM Completed": _("BOM Completed")
     }
-    
 
-    
+
+
     summary = []
     total = 0
     # total_amount = 0
     status_counts = {k: 0 for k in status_labels}
     request_status_counts = {k: 0 for k in request_status_labels}
-    
+
     for d in data:
         status = d.get("status")
         request_status = d.get("request_status")
-        
+
         if status in status_labels:
             status_counts[status] += 1
         if request_status in request_status_labels:
             request_status_counts[request_status] += 1
-        
+
         total += 1
         # total_amount += flt(d.billed_amount)
-    
+
     for key, label in status_labels.items():
         if status_counts[key] > 0:
             summary.append({
@@ -228,7 +228,7 @@ def get_report_summary(data, filters):
                 "label": label,
                 "datatype": "Int"
             })
-    
+
     for key, label in request_status_labels.items():
         if request_status_counts[key] > 0:
             summary.append({
@@ -237,22 +237,22 @@ def get_report_summary(data, filters):
                 "label": label,
                 "datatype": "Int"
             })
-    
-    
+
+
     summary.insert(0, {
         "value": total,
         "indicator": "Blue",
         "label": _("Total Requests"),
         "datatype": "Int"
     })
-    
+
     # summary.insert(1, {
     #     "value": total_amount,
     #     "indicator": "Green",
     #     "label": _("Total Billed Amount"),
     #     "datatype": "Currency"
     # })
-    
+
     return summary
 
 def get_status_indicator(status):
@@ -272,7 +272,7 @@ def get_status_indicator(status):
 def get_chart_data(data, filters):
     if not data:
         return None
-    
+
     charts = []
 
     status_data = defaultdict(int)
@@ -363,13 +363,15 @@ def get_chart_data(data, filters):
 
     return charts[0] if charts else None
 
+
+def get_filters():
     return [
         {
             "fieldname": "from_date",
             "label": _("From Date"),
             "fieldtype": "Date",
             "width": "80",
-            "default": frappe.datetime.add_months(today(), -1)
+            "default": add_months(today(), -1)
         },
         {
             "fieldname": "to_date",

@@ -3,14 +3,15 @@
 
 import frappe
 from frappe import _
-from frappe.utils import getdate, today, date_diff, flt
+from frappe.utils import date_diff, flt, getdate, today
+
 
 def execute(filters=None):
     columns = get_columns()
     data = get_data(filters)
     summary = get_report_summary(data)
     chart = get_chart_data(data)
-    
+
     return columns, data, None, chart, summary
 
 def get_columns():
@@ -103,10 +104,10 @@ def get_data(filters):
             filters={"company": filters.get("company")},
             fields=["name"]
         )
-        
+
         if not service_requests:
             return []
-        
+
         sr_names = [sr.name for sr in service_requests]
         contracts_with_sr = frappe.get_all(
             "Contract",
@@ -116,10 +117,10 @@ def get_data(filters):
             },
             fields=["name"]
         )
-        
+
         if not contracts_with_sr:
             return []
-            
+
         contract_filters["name"] = ["in", [c.name for c in contracts_with_sr]]
 
     contracts = frappe.get_all(
@@ -143,7 +144,7 @@ def get_data(filters):
             filter_value = filters.get(key)
             if key == "property_status":
                 if filter_value == "" or filter_value is None:
-                    continue  
+                    continue
                 filter_value = 1 if filter_value == "Active" else 0
             if filter_value is not None:
                 prop_filters["utility_property" if key == "property" else "is_active"] = filter_value
@@ -152,8 +153,8 @@ def get_data(filters):
             "Contract Utility Property Item",
             filters=prop_filters,
             fields=[
-                "utility_property", "start_date", "end_date", 
-                "is_active", "contract_length_months as contract_length", 
+                "utility_property", "start_date", "end_date",
+                "is_active", "contract_length_months as contract_length",
                 "adjustment_rule", "insurance"
             ]
         )
@@ -168,7 +169,7 @@ def get_data(filters):
             if prop.end_date:
                 remaining_days = date_diff(prop.end_date, today())
 
-            row_status = contract.status if idx == 0 else ""
+            row_status = contract.status
             if remaining_days > 0 and remaining_days <= days_threshold and contract.status == "Active":
                 row_status = "Nearing End"
 
@@ -230,7 +231,7 @@ def get_report_summary(data):
         })
 
     summary.insert(0, {
-        "value": total,
+        "value": len(data),
         "indicator": "Blue",
         "label": _("Total Properties"),
         "datatype": "Int"
@@ -241,26 +242,26 @@ def get_report_summary(data):
 def get_chart_data(data):
     if not data:
         return None
-    
+
     status_data = {}
     status_colors = {
-        "Active": "#28a745",    
-        "Nearing End": "#ffa500", 
-        "Expired": "#6c757d",   
-        "Cancelled": "#dc3545", 
-        "Draft": "#007bff"      
+        "Active": "#28a745",
+        "Nearing End": "#ffa500",
+        "Expired": "#6c757d",
+        "Cancelled": "#dc3545",
+        "Draft": "#007bff"
     }
-    
+
     for d in data:
         if d.get("is_total"):
             continue
         status = d.get("status")
         if status:
             status_data[status] = status_data.get(status, 0) + 1
-    
+
     labels = list(status_data.keys())
     colors = [status_colors.get(label, "#000000") for label in labels]
-    
+
     chart = {
         "data": {
             "labels": labels,
@@ -274,5 +275,5 @@ def get_chart_data(data):
         "colors": colors,
         "title": _("Contract Status Distribution")
     }
-    
+
     return chart
