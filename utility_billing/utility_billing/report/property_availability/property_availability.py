@@ -3,6 +3,7 @@
 
 import frappe
 
+
 def execute(filters=None):
     columns = get_columns()
     data = get_data(filters)
@@ -31,30 +32,28 @@ def get_data(filters):
     filters = filters or {}
     conditions = {"is_group": 0}
 
-   
+
     exact_filters = ["status", "utility_category", "company", "is_fixed_asset"]
     for key in exact_filters:
         if key in filters and filters[key] not in [None, ""]:
             conditions[key] = filters[key]
 
-   
+
     if filters.get("location"):
         conditions["location"] = ["like", f"%{filters['location']}%"]
 
-   
+
     range_fields = ["bedrooms", "bathrooms", "unit_size"]
     for field in range_fields:
-        min_key = f"min_{field}"
-        max_key = f"max_{field}"
+        min_val = filters.get(f"min_{field}")
+        max_val = filters.get(f"max_{field}")
 
-        if filters.get(min_key) is not None and filters.get(min_key) != "":
-            conditions[field] = [">=", filters[min_key]]
-
-       
-       
-       
-        if filters.get(max_key) is not None and filters.get(max_key) != "":
-            conditions[field] = ["<=", filters[max_key]]
+        if min_val not in [None, ""] and max_val not in [None, ""]:
+            conditions[field] = ["between", [min_val, max_val]]
+        elif min_val not in [None, ""]:
+            conditions[field] = [">=", min_val]
+        elif max_val not in [None, ""]:
+            conditions[field] = ["<=", max_val]
 
     props = frappe.get_all(
         "Utility Property",
@@ -73,10 +72,20 @@ def get_report_summary(data):
     total_value = sum(d.get("gross_purchase_amount", 0) or 0 for d in data)
     available_units = sum(1 for d in data if d.get("status") == "Available")
 
+    currency = None
+    if data:
+        currency = frappe.get_cached_value("Company", data[0].get("company"), "default_currency")
+
     return [
         {"label": "Total Properties", "value": total_properties, "indicator": "blue"},
         {"label": "Available Units", "value": available_units, "indicator": "green"},
-        {"label": "Total Asset Value", "value": f"KES {total_value:,.2f}", "indicator": "orange"},
+        {
+            "label": "Total Asset Value",
+            "value": total_value,
+            "indicator": "orange",
+            "datatype": "Currency",
+            "currency": currency,
+        },
     ]
 
 def get_chart_data(data):
@@ -87,15 +96,15 @@ def get_chart_data(data):
 
     labels = list(status_counts.keys())
     values = list(status_counts.values())
-    
+
     color_map = {
         "Available": "green",
         "Occupied": "blue",
         "Under Maintenance": "orange",
         "Reserved": "purple",
     }
-    
-    colors = [color_map.get(label, "#808080") for label in labels]  
+
+    colors = [color_map.get(label, "#808080") for label in labels]
 
     return {
         "data": {

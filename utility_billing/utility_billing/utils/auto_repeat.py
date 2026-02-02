@@ -1,7 +1,9 @@
+from typing import Any, Optional
+
 import frappe
 from frappe.query_builder import DocType
-from frappe.utils import today, add_days, date_diff
-from typing import List, Dict, Any, Optional
+from frappe.utils import add_days, date_diff, today
+
 
 @frappe.whitelist()
 def cancel_auto_repeats_for_property(property_name: str) -> None:
@@ -21,7 +23,7 @@ def cancel_auto_repeats_for_property(property_name: str) -> None:
         .distinct()
     )
     invoice_names = [row[0] for row in invoice_query.run()]
-    
+
     if not invoice_names:
         return
 
@@ -65,14 +67,15 @@ def process_penalties_for_overdue_invoices() -> None:
                         utility_property = item.utility_property
 
                         matching_request = next((req for req in requested_properties if req.utility_property == utility_property), None)
-                        
+
                         if not matching_request or not matching_request.adjustment_rule:
                             continue
 
                         rule = frappe.get_doc("Billing Adjustment Rule", matching_request.adjustment_rule)
-                        days_overdue = date_diff(today(), invoice["due_date"]) - float(rule.grace_period_days)
-                        if days_overdue <= rule.grace_period_days:
+                        actual_days_overdue = date_diff(today(), invoice["due_date"])
+                        if actual_days_overdue <= float(rule.grace_period_days):
                             continue
+                        days_overdue = actual_days_overdue - float(rule.grace_period_days)
 
                         frequency_days = get_frequency_days(rule.penalty_frequency)
                         if frequency_days > 0:
@@ -115,21 +118,21 @@ def process_penalties_for_overdue_invoices() -> None:
                                 "receivable_account": rule.penalty_receivable_account,
                                 "utility_property": utility_property,
                             })
-                            
-                    except Exception as item_err:
+
+                    except Exception:
                         frappe.log_error(f"Error processing item {item.item_code} in invoice {invoice['name']}: {frappe.get_traceback()}")
                 if penalty_items:
                     try:
                         create_penalty_invoice(original_invoice, service_request, rule, penalty_items)
-                    except Exception as create_err:
+                    except Exception:
                         frappe.log_error(f"Error creating penalty invoice for {invoice['name']}: {frappe.get_traceback()}")
 
-            except Exception as inv_err:
+            except Exception:
                 frappe.log_error(f"Error processing invoice {invoice.get('name', '')}: {frappe.get_traceback()}")
 
-    except Exception as e:
+    except Exception:
         frappe.log_error(f"Error in process_penalties_for_overdue_invoices: {frappe.get_traceback()}")
-        
+
 
 def get_frequency_days(frequency: str) -> int:
     return {
@@ -138,13 +141,13 @@ def get_frequency_days(frequency: str) -> int:
         "Monthly": 30,
         "One-time": 0
     }.get(frequency, 1)
-    
+
 
 def create_penalty_invoice(
     original_invoice: Any,
     service_request: str,
     rule: Any,
-    items: List[Dict[str, Any]]
+    items: list[dict[str, Any]]
 ) -> None:
     try:
         new_total = sum(float(item.get("amount") or 0) for item in items)
@@ -176,7 +179,7 @@ def create_penalty_invoice(
             previous_total = sum(float(it.amount or 0) for it in latest_invoice.items)
             if previous_total == new_total:
                 if latest_invoice.docstatus == 0:
-                    latest_invoice.items = []  
+                    latest_invoice.items = []
                     for item in items:
                         latest_invoice.append("items", item)
                     latest_invoice.save(ignore_permissions=True)
@@ -229,5 +232,5 @@ def add_comment(doctype: str, name: str, content: str) -> None:
             "reference_name": name,
             "content": content
         }).insert(ignore_permissions=True)
-    except Exception as e:
+    except Exception:
         frappe.log_error(f"Error adding comment to {doctype} {name}: {frappe.get_traceback()}")

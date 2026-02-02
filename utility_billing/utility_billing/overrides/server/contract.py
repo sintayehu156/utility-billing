@@ -1,6 +1,7 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
+
 from utility_billing.utility_billing.utils.auto_repeat import cancel_auto_repeats_for_property
 
 
@@ -12,19 +13,19 @@ def before_submit(doc: Document, method: str) -> None:
             status = frappe.db.get_value("Utility Property", utility_property, "status")
             if status != "Available":
                 frappe.throw(_("Utility Property {0} is not available. Current status: {1}. It must be available to submit the contract.").format(utility_property, status))
-            
+
 @frappe.whitelist()
 def on_submit(doc: Document, method: str) -> None:
     for entry in doc.properties:
         utility_property = entry.utility_property
-       
+
         if utility_property and entry.is_active:
             status = frappe.db.get_value("Utility Property", utility_property, "status")
-            if doc.status == "Active" and status == ("Available" or "Reserved"):
+            if doc.status == "Active" and status in ("Available", "Reserved"):
                 frappe.db.set_value("Utility Property", utility_property, "status", "Occupied")
             elif doc.status in ("Unsigned", "Inactive") and status in ("Available", "Reserved"):
                 frappe.db.set_value("Utility Property", utility_property, "status", "Reserved")
-            
+
 
 
 @frappe.whitelist()
@@ -34,7 +35,7 @@ def on_cancel(doc: Document, method: str) -> None:
         if utility_property and entry.is_active:
             cancel_auto_repeats_for_property(utility_property)
             frappe.db.set_value("Utility Property", utility_property, "status", "Available")
-            
+
 
 @frappe.whitelist()
 def on_update_after_submit(doc: Document, method: str) -> None:

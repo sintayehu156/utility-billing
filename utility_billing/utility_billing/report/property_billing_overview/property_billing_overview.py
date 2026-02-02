@@ -1,12 +1,13 @@
 # Copyright (c) 2025, Navari Ltd and contributors
 # For license information, please see license.txt
 
-import frappe
-from frappe import _, scrub
-from frappe.utils import flt, getdate
-from erpnext.accounts.utils import get_currency_precision, get_balance_on
 from collections import defaultdict
+
+import frappe
+from erpnext.accounts.utils import get_balance_on, get_currency_precision
+from frappe import _, scrub
 from frappe.query_builder import functions as fn
+from frappe.utils import flt, getdate
 
 
 def execute(filters=None):
@@ -469,9 +470,12 @@ class PropertyBillingOverview:
         self.calculate_customer_totals()
 
         current_customer = None
-        for contract in self.contracts:
+        for _i, contract in enumerate(self.contracts):
             property_key = (contract.property, contract.customer)
             billing_info = self.billing_data[property_key]
+
+            if current_customer and contract.customer != current_customer:
+                self.data.append(self.create_customer_total_row(current_customer))
 
             is_first_row_for_customer = contract.customer != current_customer
             current_customer = contract.customer
@@ -524,6 +528,9 @@ class PropertyBillingOverview:
                 row, contract, billing_info, is_first_row_for_customer
             )
             self.data.append(row)
+
+        if current_customer:
+            self.data.append(self.create_customer_total_row(current_customer))
 
     def calculate_customer_totals(self):
         self.customer_totals = defaultdict(

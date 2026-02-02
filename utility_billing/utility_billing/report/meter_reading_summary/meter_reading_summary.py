@@ -1,6 +1,7 @@
 import frappe
 from frappe import _
 
+
 def execute(filters=None):
     filters = frappe._dict(filters or {})
     data = get_data(filters)
@@ -36,7 +37,7 @@ def get_data(filters):
 		if filters.get("to_date"):
 			conditions["date"] = ["<=", filters["to_date"]]
 
-	for key in ("customer", "utility_property", "company", "name"):  
+	for key in ("customer", "utility_property", "company", "name"):
 		if filters.get(key):
 			conditions[key] = filters[key]
 
@@ -80,17 +81,17 @@ def get_data(filters):
 						"customer": reading.customer if not reading_printed and i == 0 else "",
 						"utility_property": reading.utility_property if not reading_printed and i == 0 else "",
 						"company": reading.company if not reading_printed and i == 0 else "",
-						"meter_number": item.meter_number if  i == 0 else "",
+						"meter_number": item.meter_number if i == 0 else "",
 						"item_code": item.item_code if i == 0 else "",
-						"previous_reading": item.previous_reading if not reading_printed and i == 0 else "",
-						"current_reading": item.current_reading if not reading_printed and i == 0 else "",
-						"consumption": item.consumption if not reading_printed and i == 0 else "",
+						"previous_reading": item.previous_reading if i == 0 else "",
+						"current_reading": item.current_reading if i == 0 else "",
+						"consumption": item.consumption if i == 0 else "",
 						"block": rate.block,
 						"qty": rate.qty,
 						"rate": rate.rate,
 						"amount": rate.amount,
 						"currency": reading.currency,
-						"indent": 1 
+						"indent": 1
 					})
 				reading_printed = True
 			else:
@@ -144,7 +145,7 @@ def get_report_summary(data):
     total_readings = len(set(row.get("name") for row in data if row.get("name")))
     total_consumption = sum(row.get("consumption", 0) for row in data if row.get("consumption"))
     total_amount = sum(row.get("amount", 0) for row in data if row.get("amount"))
-    currency = next((row.get("currency") for row in data if row.get("currency")), 
+    currency = next((row.get("currency") for row in data if row.get("currency")),
                     frappe.get_cached_value("Company", frappe.defaults.get_user_default("company"), "default_currency"))
 
     return [
