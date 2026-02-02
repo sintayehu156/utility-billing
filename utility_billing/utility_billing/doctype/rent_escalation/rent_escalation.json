@@ -1,0 +1,53 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "effective_from",
+  "escalation_percentage",
+  "column_break_1",
+  "current_rent",
+  "new_rent"
+ ],
+ "fields": [
+  {
+   "fieldname": "effective_from",
+   "fieldtype": "Date",
+   "label": "Effective From",
+   "reqd": 1
+  },
+  {
+   "fieldname": "escalation_percentage",
+   "fieldtype": "Percent",
+   "label": "Escalation Percentage"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "current_rent",
+   "fieldtype": "Currency",
+   "label": "Current Rent",
+   "read_only": 1
+  },
+  {
+   "fieldname": "new_rent",
+   "fieldtype": "Currency",
+   "label": "New Rent",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "module": "Utility Billing",
+ "name": "Rent Escalation",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

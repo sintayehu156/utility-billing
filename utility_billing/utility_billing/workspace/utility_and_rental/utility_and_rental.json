@@ -95,7 +95,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Property Management",
-   "link_count": 5,
+   "link_count": 7,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -106,6 +106,26 @@
    "label": "Utility Property",
    "link_count": 0,
    "link_to": "Utility Property",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Property Inspection",
+   "link_count": 0,
+   "link_to": "Property Inspection",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Property Maintenance",
+   "link_count": 0,
+   "link_to": "Property Maintenance",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"

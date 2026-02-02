@@ -148,6 +148,8 @@ utility_demo_master_doctypes = [
     "warranty_claim",  
     "asset_category",
     "utility_property",
+    "property_inspection",
+    "property_maintenance",
 ]
 
 

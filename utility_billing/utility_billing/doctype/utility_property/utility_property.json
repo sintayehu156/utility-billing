@@ -57,6 +57,8 @@
   "features_and_amenities_section",
   "features",
   "unique_features",
+  "maintenance_history_section",
+  "latest_inspection",
   "dashboard_tab"
  ],
  "fields": [
@@ -299,6 +301,18 @@
    "fieldname": "unique_features",
    "fieldtype": "Text Editor",
    "label": "Unique Features"
+  },
+  {
+   "fieldname": "maintenance_history_section",
+   "fieldtype": "Section Break",
+   "label": "Property Status"
+  },
+  {
+   "fieldname": "latest_inspection",
+   "fieldtype": "Link",
+   "label": "Latest Inspection",
+   "options": "Property Inspection",
+   "read_only": 1
   },
   {
    "collapsible": 1,
