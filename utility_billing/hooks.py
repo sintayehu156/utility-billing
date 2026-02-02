@@ -143,9 +143,9 @@ utility_demo_master_doctypes = [
     "serial_no",
     "utility_property_feature_type",
     "utility_property_feature",
-    "utility_property_unit_type", 
+    "utility_property_unit_type",
     "utility_category",
-    "warranty_claim",  
+    "warranty_claim",
     "asset_category",
     "utility_property",
     "property_inspection",
@@ -229,6 +229,19 @@ doc_events = {
         "validate": [
             "utility_billing.utility_billing.overrides.server.item.validate"
         ],
+    },
+    "Issue": {
+        "on_update": [
+            "utility_billing.utility_billing.doctype.utility_service_request.utility_service_request.issue_on_update"
+        ]
+    },
+    "BOM": {
+        "on_update": [
+            "utility_billing.utility_billing.doctype.utility_service_request.utility_service_request.bom_on_update"
+        ],
+        "on_submit": [
+            "utility_billing.utility_billing.doctype.utility_service_request.utility_service_request.bom_on_update"
+        ]
     }
 }
 

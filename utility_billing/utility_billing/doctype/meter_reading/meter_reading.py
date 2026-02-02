@@ -45,6 +45,7 @@ class MeterReading(Document):
             item_code=item.item_code,
             customer=self.customer,
             meter_number=item.meter_number,
+            property=self.property,
         )
         item.previous_reading = previous_reading
 
@@ -69,7 +70,7 @@ def create_sales_order(meter_reading):
             "selling_price_list": meter_reading.price_list,
         }
     )
-    
+
     accounting_dimensions = frappe.get_all("Accounting Dimension", pluck="document_type")
     for dim in accounting_dimensions:
         dim_field = frappe.scrub(dim)
@@ -87,7 +88,10 @@ def create_sales_order(meter_reading):
 
     for i in meter_reading.items:
         prev_reading = get_previous_invoice_reading(
-            i.item_code, meter_reading.customer, i.meter_number
+            i.item_code,
+            meter_reading.customer,
+            i.meter_number,
+            meter_reading.property,
         )
         sales_order.append(
             "meter_readings",
@@ -105,15 +109,45 @@ def create_sales_order(meter_reading):
 
     sales_order.insert()
     AccountsController.append_taxes_from_item_tax_template(sales_order)
+    sales_order.run_method("calculate_taxes_and_totals")
     sales_order.save()
 
     return sales_order
 
 
 @frappe.whitelist()
-def get_previous_invoice_reading(item_code, customer, meter_number=None):
-    """Fetch the latest reading for the specified customer, item, and optional meter number."""
+def get_previous_invoice_reading(item_code, customer, meter_number=None, property=None):
+    """Fetch the latest reading for the specified customer, item, property and optional meter number."""
 
+    # Primary source: Submitted Meter Readings
+    MeterReadingItem = DocType("Meter Reading Item")
+    MeterReadingDoc = DocType("Meter Reading")
+
+    query = (
+        frappe.qb.from_(MeterReadingItem)
+        .join(MeterReadingDoc)
+        .on(MeterReadingDoc.name == MeterReadingItem.parent)
+        .select(MeterReadingItem.current_reading)
+        .where(MeterReadingDoc.customer == customer)
+        .where(MeterReadingItem.item_code == item_code)
+        .where(MeterReadingDoc.docstatus == 1)
+    )
+
+    if property:
+        query = query.where(MeterReadingDoc.property == property)
+
+    if meter_number:
+        query = query.where(MeterReadingItem.meter_number == meter_number)
+    else:
+        query = query.where(MeterReadingItem.meter_number.isnull())
+
+    query = query.orderby(MeterReadingItem.creation, order=Order.desc)
+    result = query.limit(1).run()
+
+    if result:
+        return result[0][0]
+
+    # Fallback: Sales Invoice Meter Reading
     SalesInvoiceMeterReading = DocType("Sales Invoice Meter Reading")
     SalesInvoice = DocType("Sales Invoice")
 
@@ -126,6 +160,9 @@ def get_previous_invoice_reading(item_code, customer, meter_number=None):
         .where(SalesInvoiceMeterReading.item_code == item_code)
         .where(SalesInvoice.docstatus == 1)
     )
+
+    if property:
+        query = query.where(SalesInvoice.utility_property == property)
 
     if meter_number:
         query = query.where(SalesInvoiceMeterReading.meter_number == meter_number)

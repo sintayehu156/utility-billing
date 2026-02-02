@@ -161,6 +161,7 @@ function fetch_previous_reading(frm, row) {
 				item_code: row.item_code,
 				customer: frm.doc.customer,
 				meter_number: row.meter_number,
+				property: frm.doc.property,
 			},
 			callback: function (r) {
 				row.previous_reading = r.message || 0;
