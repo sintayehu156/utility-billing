@@ -4,6 +4,7 @@
 import frappe
 from frappe.model.document import Document
 
+
 class UtilityBillingSettings(Document):
     def on_change(self):
         self.update_tenancy_end_notification()
@@ -11,7 +12,7 @@ class UtilityBillingSettings(Document):
     def update_tenancy_end_notification(self):
         """Update or create the tenancy end notification based on months in advance."""
         months = self.months_in_advance_to_notify_of_tenancy_ending or 6
-        days_in_advance = months * 30  
+        days_in_advance = months * 30
 
         notification_name = "Tenancy End Notification"
 
@@ -48,4 +49,3 @@ class UtilityBillingSettings(Document):
         else:
             frappe.db.set_value("Notification", notification_name, "days_in_advance", days_in_advance)
             frappe.db.commit()
- 

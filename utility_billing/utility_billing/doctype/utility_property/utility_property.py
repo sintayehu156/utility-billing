@@ -5,6 +5,7 @@ import frappe
 from frappe.contacts.address_and_contact import load_address_and_contact
 from frappe.utils.nestedset import NestedSet
 
+
 class UtilityProperty(NestedSet):
     def onload(self):
         load_address_and_contact(self)
@@ -61,8 +62,8 @@ class UtilityProperty(NestedSet):
                     "asset_category": self.asset_category,
                     "naming_series": self.asset_naming_series or "ACC-ASS-.YYYY.-",
                     "is_existing_asset": 1,
-                    "gross_purchase_amount": self.gross_purchase_amount, 
-                    "purchase_date": self.purchase_date, 
+                    "gross_purchase_amount": self.gross_purchase_amount,
+                    "purchase_date": self.purchase_date,
                     "location": self.location
                 })
                 asset_doc.insert(ignore_permissions=True, ignore_mandatory=True, ignore_links=True)

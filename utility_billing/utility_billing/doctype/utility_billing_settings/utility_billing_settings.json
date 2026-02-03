@@ -21,7 +21,12 @@
   "demo_section",
   "generate_demo_data",
   "column_break_agjn",
-  "clear_demo_data"
+  "clear_demo_data",
+  "legal_compliance_section",
+  "minimum_lease_duration_years",
+  "lease_extension_notice_months",
+  "late_fee_percentage_per_day",
+  "late_fee_grace_period_days"
  ],
  "fields": [
   {
@@ -117,6 +122,35 @@
    "fieldname": "months_in_advance_to_notify_of_tenancy_ending",
    "fieldtype": "Int",
    "label": "Months in Advance to Notify of Tenancy Ending"
+  },
+  {
+   "fieldname": "legal_compliance_section",
+   "fieldtype": "Section Break",
+   "label": "Legal & Compliance"
+  },
+  {
+   "default": "1",
+   "fieldname": "minimum_lease_duration_years",
+   "fieldtype": "Int",
+   "label": "Minimum Lease Duration (Years)"
+  },
+  {
+   "default": "2",
+   "fieldname": "lease_extension_notice_months",
+   "fieldtype": "Int",
+   "label": "Lease Extension Notice (Months)"
+  },
+  {
+   "default": "5",
+   "fieldname": "late_fee_percentage_per_day",
+   "fieldtype": "Percent",
+   "label": "Late Fee Percentage Per Day"
+  },
+  {
+   "default": "5",
+   "fieldname": "late_fee_grace_period_days",
+   "fieldtype": "Int",
+   "label": "Late Fee Grace Period (Days)"
   }
  ],
  "index_web_pages_for_search": 1,

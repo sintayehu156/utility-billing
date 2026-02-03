@@ -13,6 +13,37 @@ frappe.ui.form.on("Contract", {
 		};
 
 		set_is_active_readonly(frm);
+
+		if (frm.doc.docstatus === 1) {
+			frm.add_custom_button(
+				__("Log Communication"),
+				function () {
+					frappe.model.with_doctype("PMS Communication Log", function () {
+						let new_doc = frappe.model.get_new_doc("PMS Communication Log");
+						new_doc.reference_doctype = frm.doc.doctype;
+						new_doc.reference_name = frm.doc.name;
+						new_doc.recipient = frm.doc.party_name;
+						frappe.set_route("Form", "PMS Communication Log", new_doc.name);
+					});
+				},
+				__("Actions")
+			);
+
+			frm.add_custom_button(
+				__("Create Inspection"),
+				function () {
+					frappe.model.with_doctype("Property Inspection", function () {
+						let new_doc = frappe.model.get_new_doc("Property Inspection");
+						new_doc.tenant = frm.doc.party_name;
+						if (frm.doc.properties && frm.doc.properties.length > 0) {
+							new_doc.property = frm.doc.properties[0].utility_property;
+						}
+						frappe.set_route("Form", "Property Inspection", new_doc.name);
+					});
+				},
+				__("Actions")
+			);
+		}
 	},
 });
 

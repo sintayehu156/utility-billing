@@ -150,6 +150,10 @@ utility_demo_master_doctypes = [
     "utility_property",
     "property_inspection",
     "property_maintenance",
+    "facility_booking",
+    "property_rule",
+    "unit_swap_request",
+    "legal_dispute",
 ]
 
 

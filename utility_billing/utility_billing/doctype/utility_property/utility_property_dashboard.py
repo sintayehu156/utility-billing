@@ -1,5 +1,6 @@
 from frappe import _
 
+
 def get_data():
     return {
         "fieldname": "utility_property",
@@ -8,7 +9,7 @@ def get_data():
             "Meter Reading": "property",
         },
         "transactions": [
-            
+
             {
                 "label": _("Contracts"),
                 "items": [
@@ -60,6 +61,6 @@ def get_data():
                     "Purchase Invoice",
                 ],
             },
-            
+
         ],
     }

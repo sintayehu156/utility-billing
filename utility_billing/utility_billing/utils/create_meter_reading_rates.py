@@ -60,9 +60,7 @@ def get_item_prices(item_code, price_list, reading_date):
 def raise_no_pricing_error(item_code, price_list, reading_date):
     """Raise an error if no valid pricing is available."""
     frappe.throw(
-        ("No valid pricing available for Item {0} on Price List {1} as of {2}").format(
-            item_code, price_list, reading_date
-        )
+        f"No valid pricing available for Item {item_code} on Price List {price_list} as of {reading_date}"
     )
 
 
@@ -90,9 +88,9 @@ def process_fixed_meter_charge(meter_reading, item, item_price_doc, total_consum
 def raise_exceeds_upper_limit_error(item_code, upper_limit):
     """Raise an error if the consumption exceeds the upper limit of a fixed charge slab."""
     frappe.throw(
-        (
-            "Consumption for Item {0} exceeds the upper limit of the fixed charge slab ({1})."
-        ).format(item_code, upper_limit)
+
+            f"Consumption for Item {item_code} exceeds the upper limit of the fixed charge slab ({upper_limit})."
+
     )
 
 

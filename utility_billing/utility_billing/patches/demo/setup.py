@@ -1,36 +1,36 @@
 import json
 import os
-from typing import Dict, Any, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 import frappe
 from erpnext.setup.demo import create_transaction_deletion_record, delete_company
 
+from .billing import clear_meter_readings, delete_sales_orders, insert_meter_readings
 from .company import create_sample_company
-from .utils import logger
-from .billing import insert_meter_readings, clear_meter_readings, delete_sales_orders
-from .service_request import (
-    insert_bill_structures,
-    clear_bill_structures,
-    insert_service_requests,
-    clear_service_requests,
-    clear_existing_contracts,
-)
 from .property_setup import delete_assets
+from .service_request import (
+    clear_bill_structures,
+    clear_existing_contracts,
+    clear_service_requests,
+    insert_bill_structures,
+    insert_service_requests,
+)
+from .utils import logger
 
 
 def run_demo_setup() -> None:
     """Run the complete demo setup process."""
     logger.info("Starting demo setup...")
-    
+
     try:
         frappe.db.begin()
-        
+
         create_sample_company()
         process_masters()
         insert_meter_readings()
         insert_bill_structures()
         insert_service_requests()
-        
+
         frappe.db.commit()
         frappe.msgprint("Demo setup completed successfully.")
         logger.info("Demo setup completed successfully.")
@@ -45,11 +45,11 @@ def run_demo_setup() -> None:
 def delete_demo_data() -> None:
     """Delete all demo data created by the setup process."""
     logger.info("Starting demo data deletion...")
-    
+
     try:
         frappe.db.begin()
         company = "Utility and Rental (Demo)"
-        
+
         create_transaction_deletion_record(company)
         delete_sales_orders()
         clear_meter_readings()
@@ -59,7 +59,7 @@ def delete_demo_data() -> None:
         delete_assets()
         process_masters_deletion()
         delete_company(company)
-        
+
         frappe.db.commit()
         frappe.msgprint("Demo data deletion completed successfully.")
         logger.info("Demo data deletion completed successfully.")
@@ -91,7 +91,7 @@ def process_masters() -> None:
         raise
 
 
-def create_demo_record(item: Dict[str, Any]) -> None:
+def create_demo_record(item: dict[str, Any]) -> None:
     """Create a single demo record in the database.
     
     Args:
@@ -103,17 +103,17 @@ def create_demo_record(item: Dict[str, Any]) -> None:
         if not doctype:
             frappe.log_error("Demo Setup Error", f"Missing doctype in item: {item}")
             return
-            
-        filters: Dict[str, Union[str, int, float, bool]] = {}
+
+        filters: dict[str, str | int | float | bool] = {}
         for field, value in item.items():
             # Only add primitive types to filters, excluding lists and dictionaries
             if field != "doctype" and isinstance(value, (str, int, float, bool)) and not isinstance(value, list) and not isinstance(value, dict):
                 filters[field] = value
-                
+
         if filters and frappe.db.exists(doctype, filters):
             frappe.logger().debug(f"Record already exists for {doctype} with filters {filters}")
             return
-            
+
         doc = frappe.get_doc(item)
         doc.insert(ignore_permissions=True, ignore_mandatory=True, ignore_links=True)
     except frappe.exceptions.DuplicateEntryError:
@@ -154,7 +154,7 @@ def process_masters_deletion() -> None:
         frappe.log_error("Demo Deletion Error", f"Failed to delete masters: {str(e)}")
 
 
-def delete_demo_record(item: Dict[str, Any]) -> None:
+def delete_demo_record(item: dict[str, Any]) -> None:
     """Delete a single demo record from the database.
     
     Args:
@@ -166,12 +166,12 @@ def delete_demo_record(item: Dict[str, Any]) -> None:
         if not doctype:
             frappe.log_error("Demo Deletion Error", f"Missing doctype in item: {item}")
             return
-            
-        filters: Dict[str, Union[str, int, float, bool]] = {}
+
+        filters: dict[str, str | int | float | bool] = {}
         for field, value in item.items():
             if field != "doctype" and isinstance(value, (str, int, float, bool)) and not isinstance(value, list) and not isinstance(value, dict):
                 filters[field] = value
-                
+
         if filters and frappe.db.exists(doctype, filters):
             frappe.delete_doc(doctype, frappe.db.get_value(doctype, filters, 'name'), force=True)
             frappe.logger().debug(f"Deleted record for {doctype} with filters {filters}")

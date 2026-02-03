@@ -1,14 +1,15 @@
 import json
 import logging
+from collections.abc import Callable
 from pathlib import Path
-from typing import Dict, List, Union, Optional, Any, Tuple, TypeVar, Callable
+from typing import Any, Dict, List, Optional, Tuple, TypeVar, Union
 
 import frappe
 
-BASE_DIR = Path(__file__).parent 
+BASE_DIR = Path(__file__).parent
 
 # Colored logging setup
-COLORS: Dict[str, str] = {
+COLORS: dict[str, str] = {
     'DEBUG': '\033[94m',
     'INFO': '\033[92m',
     'WARNING': '\033[93m',
@@ -36,7 +37,7 @@ def setup_logger(level: int = logging.INFO) -> logging.Logger:
 
 logger = setup_logger()
 
-def safe_insert_doc(doctype: str, data: Dict[str, Any], unique_key: Optional[Union[str, Dict[str, Any]]] = None) -> bool:
+def safe_insert_doc(doctype: str, data: dict[str, Any], unique_key: str | dict[str, Any] | None = None) -> bool:
     """
     Insert a document if not exists by unique_key.
     
@@ -55,17 +56,17 @@ def safe_insert_doc(doctype: str, data: Dict[str, Any], unique_key: Optional[Uni
             # fallback no unique key - always insert (not recommended)
             frappe.get_doc(data).insert()
             return True
-        
+
         if isinstance(unique_key, str):
             filter_criteria = {unique_key: data.get(unique_key)}
         elif isinstance(unique_key, dict):
             filter_criteria = unique_key
         else:
             raise ValueError("unique_key must be str or dict")
-        
+
         if frappe.db.exists(doctype, filter_criteria):
             return False
-        
+
         frappe.get_doc(data).insert()
         return True
 
@@ -74,7 +75,7 @@ def safe_insert_doc(doctype: str, data: Dict[str, Any], unique_key: Optional[Uni
         return False
 
 
-def get_doc_or_create(doctype: str, filters: Dict[str, Any], defaults: Optional[Dict[str, Any]] = None) -> Optional[Any]:
+def get_doc_or_create(doctype: str, filters: dict[str, Any], defaults: dict[str, Any] | None = None) -> Any | None:
     """
     Get a document by filters or create new with defaults.
 
@@ -109,7 +110,7 @@ def get_doc_or_create(doctype: str, filters: Dict[str, Any], defaults: Optional[
         return None
 
 
-def safe_load_json(path: Union[str, Path]) -> Optional[Union[List[Any], Dict[str, Any]]]:
+def safe_load_json(path: str | Path) -> list[Any] | dict[str, Any] | None:
     """
     Safely load JSON from a file path.
     
@@ -121,7 +122,7 @@ def safe_load_json(path: Union[str, Path]) -> Optional[Union[List[Any], Dict[str
     """
     try:
         full_path = BASE_DIR / path if isinstance(path, str) else path
-        with open(full_path, "r", encoding="utf-8") as f:
+        with open(full_path, encoding="utf-8") as f:
             data = json.load(f)
             return data
     except Exception as e:
@@ -129,8 +130,8 @@ def safe_load_json(path: Union[str, Path]) -> Optional[Union[List[Any], Dict[str
         return None
 
 
-def insert_from_json(filename: str, doctype: str, 
-                    unique_key: Union[str, Dict[str, Any]]) -> None:
+def insert_from_json(filename: str, doctype: str,
+                    unique_key: str | dict[str, Any]) -> None:
     """
     Generic function to insert records from JSON file.
 
@@ -157,4 +158,3 @@ def insert_from_json(filename: str, doctype: str,
                 success_count += 1
         except Exception as e:
             logger.exception(f"Error inserting {doctype} record: {str(e)}")
-    

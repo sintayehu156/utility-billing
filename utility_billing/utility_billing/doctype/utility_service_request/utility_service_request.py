@@ -58,6 +58,12 @@ class UtilityServiceRequest(Document):
         if self.start_date and self.end_date and getdate(self.start_date) > getdate(self.end_date):
             frappe.throw("Contract start date cannot be after the end date.")
 
+        if self.start_date and self.end_date:
+            min_duration = frappe.db.get_single_value("Utility Billing Settings", "minimum_lease_duration_years") or 1
+            duration_months = self.get_month_diff(getdate(self.start_date), getdate(self.end_date))
+            if duration_months < (min_duration * 12):
+                frappe.msgprint(_("Warning: Minimum lease duration is {0} year(s). Current duration is {1} months.").format(min_duration, duration_months))
+
         if self.start_date and self.contract_length_months and not self.end_date:
             self.end_date = add_months(getdate(self.start_date), self.contract_length_months)
 

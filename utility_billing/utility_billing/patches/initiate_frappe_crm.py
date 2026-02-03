@@ -1,5 +1,6 @@
 import frappe
 
+
 def execute():
     try:
         default_company = frappe.defaults.get_global_default("company")

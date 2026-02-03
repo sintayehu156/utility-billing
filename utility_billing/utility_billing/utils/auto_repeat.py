@@ -46,6 +46,7 @@ def cancel_auto_repeats_for_property(property_name: str) -> None:
 @frappe.whitelist()
 def process_penalties_for_overdue_invoices() -> None:
     # No params to check
+    check_termination_eligibility()
     try:
         overdue_invoices = frappe.db.get_list("Sales Invoice", filters={"status": "Overdue"}, fields=["name", "due_date", "posting_date", "customer"])
 
@@ -221,6 +222,23 @@ def create_penalty_invoice(
 
     except Exception:
         frappe.log_error(f"Error in create_penalty_invoice for {original_invoice.name}: {frappe.get_traceback()}")
+
+
+def check_termination_eligibility():
+    """Flag contracts for termination if any linked invoice is overdue for more than 30 days."""
+    overdue_invoices = frappe.db.get_list(
+        "Sales Invoice",
+        filters={"status": "Overdue", "docstatus": 1},
+        fields=["name", "due_date", "utility_service_request"]
+    )
+
+    for invoice in overdue_invoices:
+        if date_diff(today(), invoice["due_date"]) >= 30:
+            if invoice["utility_service_request"]:
+                contract_name = frappe.db.get_value("Contract", {"utility_service_request": invoice["utility_service_request"]}, "name")
+                if contract_name:
+                    frappe.db.set_value("Contract", contract_name, "is_eligible_for_termination", 1)
+                    frappe.db.set_value("Contract", contract_name, "termination_reason", f"Invoice {invoice['name']} is overdue for more than 30 days.")
 
 
 def add_comment(doctype: str, name: str, content: str) -> None:

@@ -1,8 +1,10 @@
 import frappe
+
 from .create_fields_from_json import create_fields_from_json
 
+
 def create_fields(site: str) -> None:
-    current_app = frappe.get_installed_apps()[-1]  
+    current_app = frappe.get_installed_apps()[-1]
     if current_app != "utility_billing":
         return
 

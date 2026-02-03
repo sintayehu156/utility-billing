@@ -4,6 +4,7 @@ import os
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
+
 def create_fields_from_json(json_file_name: str, doctype: str) -> None:
     try:
         current_dir: str = os.path.dirname(os.path.abspath(__file__))

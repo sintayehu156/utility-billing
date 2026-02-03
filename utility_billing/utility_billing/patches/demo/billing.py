@@ -1,5 +1,7 @@
 import json
+
 import frappe
+
 from .utils import safe_load_json
 
 
@@ -29,12 +31,12 @@ def insert_meter_readings() -> None:
                 "date": entry["date"],
                 "price_list": entry["price_list"],
                 "currency": entry["currency"],
-                "property": entry["property"], 
+                "property": entry["property"],
                 "company":  entry["company"],
             })
 
         doc.set("items", [])
-        
+
         for item in entry.get("items", []):
             doc.append("items", {
                 "item_code": item["item_code"],
@@ -46,8 +48,8 @@ def insert_meter_readings() -> None:
 
         doc.save()
         doc.submit()
-            
-            
+
+
 def delete_sales_orders() -> None:
     customers_data = safe_load_json("data/customer.json")
     demo_customers = [c["customer_name"] for c in customers_data]
@@ -95,7 +97,7 @@ def delete_sales_orders() -> None:
             frappe.db.rollback()
             frappe.log_error(f"Error deleting Sales Order {so_name}: {e}")
 
-       
+
 def clear_meter_readings() -> None:
     readings = safe_load_json("data/meter_reading.json")
 
@@ -138,7 +140,7 @@ def clear_meter_readings() -> None:
             ], key=lambda x: (x["item_code"], x["meter_number"]))
 
             if json_items != doc_items:
-                continue  
+                continue
 
             if doc.docstatus == 1:
                 doc.cancel()

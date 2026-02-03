@@ -1,5 +1,6 @@
 import frappe
 
+
 def execute():
     if not frappe.db.exists("Notification", "Property Contract End Notification"):
         frappe.get_doc({

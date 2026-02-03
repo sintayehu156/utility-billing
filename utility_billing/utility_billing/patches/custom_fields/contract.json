@@ -47,5 +47,31 @@
     "fieldtype": "Table",
     "options": "Rent Escalation",
     "insert_after": "security_deposit_received"
+  },
+  {
+    "fieldname": "lessor_details",
+    "label": "Lessor Details",
+    "fieldtype": "Link",
+    "options": "Company",
+    "insert_after": "party_name"
+  },
+  {
+    "fieldname": "termination_eligibility_section",
+    "label": "Termination Eligibility",
+    "fieldtype": "Section Break",
+    "insert_after": "escalations"
+  },
+  {
+    "fieldname": "is_eligible_for_termination",
+    "label": "Eligible for Termination",
+    "fieldtype": "Check",
+    "read_only": 1,
+    "insert_after": "termination_eligibility_section"
+  },
+  {
+    "fieldname": "termination_reason",
+    "label": "Termination Reason",
+    "fieldtype": "Small Text",
+    "insert_after": "is_eligible_for_termination"
   }
 ]

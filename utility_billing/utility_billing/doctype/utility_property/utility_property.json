@@ -46,13 +46,18 @@
   "unit_information_tab",
   "unit_information_section",
   "unit_number",
+  "parking_space",
   "bedrooms",
   "column_break_qsil",
   "unit_type",
+  "furnishing_status",
   "bathrooms",
   "column_break_qbgf",
   "unit_size",
   "floor_level",
+  "inventory_tab",
+  "inventory_section",
+  "inventory",
   "features_and_amenities_tab",
   "features_and_amenities_section",
   "features",
@@ -288,6 +293,11 @@
    "label": "Unit Number"
   },
   {
+   "fieldname": "parking_space",
+   "fieldtype": "Data",
+   "label": "Assigned Parking Space"
+  },
+  {
    "fieldname": "column_break_qsil",
    "fieldtype": "Column Break"
   },
@@ -296,6 +306,13 @@
    "fieldtype": "Link",
    "label": "Unit Type",
    "options": "Utility Property Unit Type"
+  },
+  {
+   "default": "Unfurnished",
+   "fieldname": "furnishing_status",
+   "fieldtype": "Select",
+   "label": "Furnishing Status",
+   "options": "Furnished\nUnfurnished"
   },
   {
    "fieldname": "unique_features",
@@ -367,6 +384,22 @@
    "fieldname": "unit_information_tab",
    "fieldtype": "Tab Break",
    "label": "Unit Information"
+  },
+  {
+   "fieldname": "inventory_tab",
+   "fieldtype": "Tab Break",
+   "label": "Inventory (Annex A)"
+  },
+  {
+   "fieldname": "inventory_section",
+   "fieldtype": "Section Break",
+   "label": "Standard Inventory"
+  },
+  {
+   "fieldname": "inventory",
+   "fieldtype": "Table",
+   "label": "Inventory Items",
+   "options": "Property Inventory Item"
   },
   {
    "fieldname": "features_and_amenities_tab",

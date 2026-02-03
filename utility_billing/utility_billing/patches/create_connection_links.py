@@ -1,10 +1,11 @@
 import frappe
 
+
 def execute():
     target_links = [
         {"link_doctype": "Meter Reading", "link_fieldname": "customer", "group": "Utility Billing"},
-        {"link_doctype": "Utility Service Request", "link_fieldname": "customer", "group": "Utility Billing"}, 
-        {"link_doctype": "Contract", "link_fieldname": "party_name", "group": "Utility Billing"}, 
+        {"link_doctype": "Utility Service Request", "link_fieldname": "customer", "group": "Utility Billing"},
+        {"link_doctype": "Contract", "link_fieldname": "party_name", "group": "Utility Billing"},
     ]
 
     customer_doc = frappe.get_doc("DocType", "Customer")

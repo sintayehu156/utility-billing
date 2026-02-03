@@ -2,6 +2,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 
+
 @frappe.whitelist()
 def validate(doc: Document, method: str) -> None:
     if not doc.item_group:

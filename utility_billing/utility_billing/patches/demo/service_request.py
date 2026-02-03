@@ -1,13 +1,15 @@
-import frappe
-from typing import List, Dict, Any
-from .utils import safe_insert_doc, safe_load_json
 from datetime import timedelta
-from frappe.utils import nowdate, add_months, getdate
+from typing import Any, Dict, List
+
+import frappe
+from frappe.utils import add_months, getdate, nowdate
+
+from .utils import safe_insert_doc, safe_load_json
 
 
 def clear_bill_structures() -> None:
-    docs = frappe.get_list("Utility Bill Structure", 
-                          filters={"company": "Utility and Rental (Demo)"}, 
+    docs = frappe.get_list("Utility Bill Structure",
+                          filters={"company": "Utility and Rental (Demo)"},
                           fields=["name"])
 
     for d in docs:
@@ -23,14 +25,14 @@ def clear_bill_structures() -> None:
 
 
 def insert_bill_structures() -> None:
-    """Insert utility bill structures with the latest fiscal year.""" 
+    """Insert utility bill structures with the latest fiscal year."""
     bill_structures = safe_load_json("data/utility_bill_structure.json")
-    fiscal_years = frappe.get_list("Fiscal Year", 
+    fiscal_years = frappe.get_list("Fiscal Year",
                                   filters={"disabled": 0},
                                   order_by="year_start_date desc",
                                   limit=1)
     fiscal_year = fiscal_years[0].name if fiscal_years else None
-    
+
     for structure in bill_structures:
         doc = frappe.get_doc({
             "doctype": "Utility Bill Structure",
@@ -38,19 +40,19 @@ def insert_bill_structures() -> None:
             "items": [],
             "company": structure.get("company", "Utility and Rental (Demo)"),
         })
-        
+
         for item in structure.get("items", []):
             doc.append("items", {
                 "item": item.get("item"),
                 "amount": item.get("amount"),
                 "total": item.get("total")
             })
-        
+
         doc.insert(ignore_permissions=True)
         doc.submit()
 
 
-def insert_contract_terms(contract_terms: List[Dict[str, Any]]) -> None:
+def insert_contract_terms(contract_terms: list[dict[str, Any]]) -> None:
     """Insert contract terms with error handling."""
     for term in contract_terms:
         safe_insert_doc(
@@ -62,13 +64,13 @@ def insert_contract_terms(contract_terms: List[Dict[str, Any]]) -> None:
             },
             unique_key="title"
         )
-        
+
 
 def clear_existing_contracts() -> None:
     """Cancel and delete all submitted contracts."""
     customers_data = safe_load_json("data/customer.json")
     demo_parties = [c["customer_name"] for c in customers_data]
-    
+
     if not demo_parties:
         return
 
@@ -86,11 +88,11 @@ def clear_existing_contracts() -> None:
     deleted_count = 0
     for contract_name, contract in demo_contracts.items():
         try:
-            if contract.docstatus == 1:  
+            if contract.docstatus == 1:
                 contract_doc = frappe.get_doc("Contract", contract_name)
                 contract_doc.cancel()
                 frappe.db.commit()
-            
+
             frappe.delete_doc("Contract", contract_name)
             frappe.db.commit()
             deleted_count += 1
@@ -110,7 +112,7 @@ def get_random_bill_structure() -> str:
     )
     return structures[0].name if structures else None
 
-def assign_properties_to_request(doc, requested_props: List[Dict[str, Any]], service_start, service_end, is_signed: bool) -> None:
+def assign_properties_to_request(doc, requested_props: list[dict[str, Any]], service_start, service_end, is_signed: bool) -> None:
     """Assign utility properties with calculated dates and status."""
     total_props = len(requested_props)
     if not total_props:
@@ -118,7 +120,7 @@ def assign_properties_to_request(doc, requested_props: List[Dict[str, Any]], ser
 
     total_days = (service_end - service_start).days
     days_per_prop = total_days // total_props
-    
+
     def get_random_insurance():
         """Fetch a random insurance policy if available."""
         insurances = frappe.get_list(
@@ -135,8 +137,8 @@ def assign_properties_to_request(doc, requested_props: List[Dict[str, Any]], ser
         prop_end = prop_start + timedelta(days=days_per_prop - 1)
         if prop_end > service_end:
             prop_end = service_end
-            
-        insurance = get_random_insurance() 
+
+        insurance = get_random_insurance()
 
         doc.append("requested_properties", {
             "utility_property": prop.get("utility_property"),
@@ -154,15 +156,17 @@ def apply_contract_terms(doc, template_name: str) -> None:
     template_doc = frappe.get_doc("Contract Template", template_name)
     if template_doc and template_doc.contract_terms:
         doc.contract_terms = template_doc.contract_terms
-        
-def create_and_finalize_contract(service_request_name: str, is_signed: bool, properties: List) -> None:
+
+def create_and_finalize_contract(service_request_name: str, is_signed: bool, properties: list) -> None:
     """Create, submit, and optionally sign the associated contract."""
-    from utility_billing.utility_billing.doctype.utility_service_request.utility_service_request import create_contract
+    from utility_billing.utility_billing.doctype.utility_service_request.utility_service_request import (
+        create_contract,
+    )
     contract_name = create_contract(service_request_name)
     contract = frappe.get_doc("Contract", contract_name)
     contract.save(ignore_permissions=True)
     contract.submit()
-    
+
     status = "Occupied" if is_signed else "Reserved"
     for prop in properties:
         if prop.get("utility_property"):
@@ -172,7 +176,7 @@ def create_and_finalize_contract(service_request_name: str, is_signed: bool, pro
                 property_doc.save(ignore_permissions=True)
             except Exception as e:
                 frappe.log_error(f"Failed to update property status: {str(e)}")
-    
+
     if is_signed:
         contract.is_signed = 1
         contract.save(ignore_permissions=True)
@@ -180,7 +184,7 @@ def create_and_finalize_contract(service_request_name: str, is_signed: bool, pro
 def insert_service_requests() -> None:
     """Insert service request records with calculated property dates."""
     service_requests = safe_load_json("data/utility_service_request.json")
-    
+
     for request in service_requests:
         try:
             service_start = getdate(nowdate())
@@ -215,7 +219,7 @@ def insert_service_requests() -> None:
                 "insert_service_requests",
                 f"Error creating service request for {request.get('party_name')}: {str(e)}",
             )
- 
+
 def clear_service_requests() -> None:
     """
     Cancel and delete demo Utility Service Requests and their linked Sales Invoices
@@ -225,7 +229,7 @@ def clear_service_requests() -> None:
         return
 
     demo_parties = list({req["party_name"] for req in service_requests_data if req.get("party_name")})
-    
+
     if not demo_parties:
         return
 
@@ -241,7 +245,7 @@ def clear_service_requests() -> None:
             filters={"utility_service_request": req.name},
             fields=["name", "docstatus"]
         )
-        
+
         for invoice in invoices:
             try:
                 auto_repeats = frappe.get_all(
@@ -258,12 +262,12 @@ def clear_service_requests() -> None:
                         frappe.delete_doc("Auto Repeat", ar.name)
                     except Exception as e:
                         frappe.db.rollback()
-                        frappe.log_error(f"Error handling Auto Repeat for Sales Invoice {invoice.name}: {e}")                
-                
+                        frappe.log_error(f"Error handling Auto Repeat for Sales Invoice {invoice.name}: {e}")
+
                 if invoice.docstatus == 1:
                     inv_doc = frappe.get_doc("Sales Invoice", invoice.name)
                     inv_doc.cancel()
-                
+
                 frappe.delete_doc("Sales Invoice", invoice.name)
             except Exception as e:
                 frappe.log_error(
@@ -289,5 +293,3 @@ def clear_service_requests() -> None:
 
 
 
-    
-    

@@ -1,12 +1,14 @@
 import frappe
 from frappe import _
 
+
 @frappe.whitelist()
 def update_billing_status(utility_service_request):
-    doc = frappe.get_doc("Utility Service Request", utility_service_request)
+    pass
+    # doc = frappe.get_doc("Utility Service Request", utility_service_request)
 
     # # Get submitted Sales Invoices linked to this request
-    # invoices = frappe.get_all("Sales Invoice", 
+    # invoices = frappe.get_all("Sales Invoice",
     #     filters={
     #         "docstatus": 1,
     #         "utility_service_request": utility_service_request

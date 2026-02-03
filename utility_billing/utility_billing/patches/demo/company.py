@@ -1,11 +1,12 @@
-import frappe
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
+import frappe
+
 from .utils import logger, safe_load_json
 
-
-COMPANY_NAME: Optional[str] = None
-COMPANY_ABBR: Optional[str] = None
+COMPANY_NAME: str | None = None
+COMPANY_ABBR: str | None = None
 
 
 def create_sample_company() -> None:
@@ -19,7 +20,7 @@ def create_sample_company() -> None:
     global COMPANY_NAME, COMPANY_ABBR
 
     data = safe_load_json("data/company.json")
-    
+
     # Handle case where data is a list
     if isinstance(data, list) and data:
         company_data = data[0]

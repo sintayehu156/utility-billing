@@ -1,15 +1,17 @@
+from typing import Any, Optional
+
 import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import (
     add_days,
     add_months,
-    getdate,
-    formatdate,
-    today,
     flt,
+    formatdate,
+    getdate,
+    today,
 )
-from typing import Optional, Dict, Any
+
 
 @frappe.whitelist()
 def on_update(doc: Document, method: str) -> None:
@@ -42,10 +44,10 @@ def is_status_changed_to_completed(auto_repeat_doc: Document) -> bool:
     previous_doc = auto_repeat_doc.get_doc_before_save()
     if not previous_doc:
         return False
-    
+
     status_changed = auto_repeat_doc.has_value_changed("status")
     current_status = auto_repeat_doc.status
-    
+
     return status_changed and previous_doc.status == "Active" and current_status == "Completed"
 
 def should_process_increment(auto_repeat_doc: Document) -> bool:
@@ -65,12 +67,12 @@ def is_contract_ended(auto_repeat_doc: Document) -> bool:
         return True
     return False
 
-def create_renewal_document(auto_repeat_doc: Document, adjustment_rule: Document) -> Optional[Document]:
+def create_renewal_document(auto_repeat_doc: Document, adjustment_rule: Document) -> Document | None:
     """Create a new reference document with adjusted rates"""
     new_reference_doc = get_document_copy(auto_repeat_doc)
     set_document_dates(new_reference_doc, adjustment_rule, auto_repeat_doc.end_date)
     apply_rate_adjustments(auto_repeat_doc, new_reference_doc, adjustment_rule)
-    
+
     try:
         if hasattr(new_reference_doc, 'calculate_taxes_and_totals'):
             new_reference_doc.calculate_taxes_and_totals()
@@ -85,9 +87,9 @@ def get_document_copy(auto_repeat_doc: Document) -> Document:
     """Create a copy of the linked reference document from the Auto Repeat doc"""
     if not auto_repeat_doc.reference_document:
         frappe.throw(_("No linked document found in Auto Repeat"))
-    
+
     return frappe.copy_doc(frappe.get_doc(
-        auto_repeat_doc.reference_doctype, 
+        auto_repeat_doc.reference_doctype,
         auto_repeat_doc.reference_document
     ))
 
@@ -101,27 +103,27 @@ def set_document_dates(reference_doc: Document, adjustment_rule: Document, date:
         reference_doc.due_date = add_days(reference_doc.posting_date, overdue_after_days)
 
 def apply_rate_adjustments(
-    auto_repeat_doc: Document, 
-    reference_doc: Document, 
+    auto_repeat_doc: Document,
+    reference_doc: Document,
     adjustment_rule: Document
 ) -> None:
     """Apply rate adjustments to all items in the reference document"""
     effective_increment = get_effective_increment(adjustment_rule)
-    
+
     if hasattr(reference_doc, 'items'):
         for item in reference_doc.items:
             if not hasattr(item, 'rate'):
                 continue
-                
+
             original_rate = get_original_item_rate(
-                auto_repeat_doc.reference_doctype, 
-                auto_repeat_doc.reference_document, 
+                auto_repeat_doc.reference_doctype,
+                auto_repeat_doc.reference_document,
                 item.item_code
             )
             item.rate = calculate_new_rate(
-                item.rate, 
-                original_rate, 
-                effective_increment, 
+                item.rate,
+                original_rate,
+                effective_increment,
                 adjustment_rule
             )
             if hasattr(item, 'amount') and hasattr(item, 'qty'):
@@ -135,9 +137,9 @@ def get_effective_increment(adjustment_rule: Document) -> float:
     return increment_percent
 
 def calculate_new_rate(
-    current_rate: float, 
-    original_rate: Optional[float], 
-    increment_percent: float, 
+    current_rate: float,
+    original_rate: float | None,
+    increment_percent: float,
     adjustment_rule: Document
 ) -> float:
     """Calculate new rate based on adjustment basis"""
@@ -146,14 +148,14 @@ def calculate_new_rate(
     return flt(current_rate) * (1 + (increment_percent / 100))
 
 def get_original_item_rate(
-    doctype: str, 
-    docname: str, 
+    doctype: str,
+    docname: str,
     item_code: str
-) -> Optional[float]:
+) -> float | None:
     """Trace back to the original document to get the original rate for an item"""
     original_rate = None
     current_doc = docname
-    
+
     while current_doc:
         doc = frappe.get_doc(doctype, current_doc)
         if hasattr(doc, 'items'):
@@ -161,7 +163,7 @@ def get_original_item_rate(
                 if item.item_code == item_code and hasattr(item, 'rate'):
                     original_rate = flt(item.rate)
                     break
-        
+
         if hasattr(doc, 'auto_repeat') and doc.auto_repeat:
             auto_repeat = frappe.get_doc("Auto Repeat", doc.auto_repeat)
             if auto_repeat.reference_document != current_doc:
@@ -170,12 +172,12 @@ def get_original_item_rate(
                 current_doc = None
         else:
             current_doc = None
-    
+
     return original_rate
 
 def create_auto_repeat(
-    original_auto_repeat: Document, 
-    new_reference_doc: Document, 
+    original_auto_repeat: Document,
+    new_reference_doc: Document,
     adjustment_rule: Document
 ) -> Document:
     """Create new Auto Repeat record for the renewal"""
@@ -189,8 +191,8 @@ def create_auto_repeat(
         "repeat_on_last_day": adjustment_rule.repeat_on_last_day,
         "start_date": original_auto_repeat.end_date,
         "end_date": get_auto_repeat_end_date(
-            original_auto_repeat, 
-            original_auto_repeat.end_date, 
+            original_auto_repeat,
+            original_auto_repeat.end_date,
             adjustment_rule
         ),
         "contract_start_date": getattr(original_auto_repeat, 'contract_start_date', None),
@@ -204,10 +206,10 @@ def create_auto_repeat(
     return new_auto_repeat
 
 def get_auto_repeat_end_date(
-    auto_repeat_doc: Document, 
-    start_date: str, 
+    auto_repeat_doc: Document,
+    start_date: str,
     adjustment_rule: Document
-) -> Optional[str]:
+) -> str | None:
     """Calculate end date for auto repeat considering contract end date"""
     contract_end_date = getattr(auto_repeat_doc, 'contract_end_date', None)
     if not contract_end_date:
@@ -223,9 +225,9 @@ def get_auto_repeat_end_date(
     return proposed_end_date if proposed_end_date else None
 
 def add_audit_comment(
-    original_auto_repeat: Document, 
-    new_reference_doc: Document, 
-    new_auto_repeat: Document, 
+    original_auto_repeat: Document,
+    new_reference_doc: Document,
+    new_auto_repeat: Document,
     adjustment_rule: Document
 ) -> None:
     """Add audit comment documenting the renewal to multiple related documents"""
@@ -249,7 +251,7 @@ def add_audit_comment(
         end=formatdate(new_auto_repeat.end_date) if new_auto_repeat.end_date else _("No end date"),
         inc=get_effective_increment(adjustment_rule),
         rule=adjustment_rule.name,
-        old_ar_link=("<a href='/app/auto-repeat/{0}'>{0}</a>".format(original_auto_repeat.name) if original_auto_repeat else _("N/A")),
+        old_ar_link=(f"<a href='/app/auto-repeat/{original_auto_repeat.name}'>{original_auto_repeat.name}</a>" if original_auto_repeat else _("N/A")),
         ar=new_auto_repeat.name
     )
 
@@ -289,7 +291,7 @@ def create_repeated_entries(data):
             schedule_date = doc.get_next_schedule_date(schedule_date=doc.next_schedule_date)
             next_schedule_date = getdate(doc.next_schedule_date)
             current_date = getdate(today())
-            
+
             if next_schedule_date <= current_date and not doc.disabled:
                 doc.create_documents()
                 if schedule_date and not doc.disabled:

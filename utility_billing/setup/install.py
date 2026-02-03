@@ -1,5 +1,6 @@
 import frappe
 
+
 def create_utility_property_dimension():
     try:
         dimension_name = "Utility Property"
@@ -21,6 +22,6 @@ def create_utility_property_dimension():
                 ]
             })
             dimension.insert(ignore_permissions=True)
-            
-    except Exception as e:
+
+    except Exception:
         frappe.log_error(frappe.get_traceback(), "Error in create_utility_property_dimension")

@@ -7,11 +7,10 @@
  "engine": "InnoDB",
  "field_order": [
   "item_name",
-  "condition",
-  "is_normal_wear_and_tear",
+  "description",
   "column_break_1",
-  "remarks",
-  "image"
+  "quantity",
+  "base_condition"
  ],
  "fields": [
   {
@@ -21,36 +20,31 @@
    "reqd": 1
   },
   {
-   "fieldname": "condition",
-   "fieldtype": "Select",
-   "label": "Condition",
-   "options": "Good\nFair\nPoor\nBroken"
-  },
-  {
-   "default": "0",
-   "fieldname": "is_normal_wear_and_tear",
-   "fieldtype": "Check",
-   "label": "Normal Wear and Tear?"
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
   },
   {
    "fieldname": "column_break_1",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "remarks",
-   "fieldtype": "Small Text",
-   "label": "Remarks"
+   "default": "1",
+   "fieldname": "quantity",
+   "fieldtype": "Int",
+   "label": "Quantity"
   },
   {
-   "fieldname": "image",
-   "fieldtype": "Attach Image",
-   "label": "Image"
+   "fieldname": "base_condition",
+   "fieldtype": "Select",
+   "label": "Base Condition",
+   "options": "Good\nFair\nPoor"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "module": "Utility Billing",
- "name": "Property Inspection Item",
+ "name": "Property Inventory Item",
  "owner": "Administrator",
  "permissions": [],
  "sort_field": "modified",

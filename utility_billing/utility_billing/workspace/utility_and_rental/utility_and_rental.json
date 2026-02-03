@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"RdhNZhI39s\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Utility Billing &amp; Property Management</span>\",\"col\":12}},{\"id\":\"96Uspmh80R\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"sYe8H-efqi\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Shortcuts</b></span>\",\"col\":12}},{\"id\":\"yjYKVDPGXJ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Utility Billing Settings\",\"col\":3}},{\"id\":\"eqpOxmo372\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Utility Service Request\",\"col\":3}},{\"id\":\"FnxJmE8cHW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Meter Reading\",\"col\":3}},{\"id\":\"_kaF7CGr06\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Utility Property\",\"col\":3}},{\"id\":\"AfmnnngAoW\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"V-YDI6I1EU\",\"type\":\"card\",\"data\":{\"card_name\":\"Service Operations\",\"col\":4}},{\"id\":\"7gy7uB2rhz\",\"type\":\"card\",\"data\":{\"card_name\":\"Property Management\",\"col\":4}},{\"id\":\"MTQmyxb7W8\",\"type\":\"card\",\"data\":{\"card_name\":\"Billing & Transactions\",\"col\":4}},{\"id\":\"r7y6y33VM7\",\"type\":\"card\",\"data\":{\"card_name\":\"Rules and Structure\",\"col\":4}},{\"id\":\"_QwacqP-jP\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"id\":\"uem37c79xh\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}}]",
+ "content": "[{\"id\":\"RdhNZhI39s\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">The Signature Residence - PMS</span>\",\"col\":12}},{\"id\":\"96Uspmh80R\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"sYe8H-efqi\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Shortcuts</b></span>\",\"col\":12}},{\"id\":\"yjYKVDPGXJ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Utility Billing Settings\",\"col\":3}},{\"id\":\"eqpOxmo372\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Utility Service Request\",\"col\":3}},{\"id\":\"FnxJmE8cHW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Meter Reading\",\"col\":3}},{\"id\":\"_kaF7CGr06\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Utility Property\",\"col\":3}},{\"id\":\"AfmnnngAoW\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"V-YDI6I1EU\",\"type\":\"card\",\"data\":{\"card_name\":\"Leasing & Tenants\",\"col\":4}},{\"id\":\"7gy7uB2rhz\",\"type\":\"card\",\"data\":{\"card_name\":\"Property Operations\",\"col\":4}},{\"id\":\"MTQmyxb7W8\",\"type\":\"card\",\"data\":{\"card_name\":\"Billing & Financials\",\"col\":4}},{\"id\":\"legal_card\",\"type\":\"card\",\"data\":{\"card_name\":\"Legal & Compliance\",\"col\":4}},{\"id\":\"_QwacqP-jP\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"id\":\"uem37c79xh\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings & Rules\",\"col\":4}}]",
  "creation": "2025-05-02 19:43:46.526258",
  "custom_blocks": [],
  "docstatus": 0,
@@ -16,27 +16,8 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Settings",
-   "link_count": 1,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Utility Billing Settings",
-   "link_count": 0,
-   "link_to": "Utility Billing Settings",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Service Operations",
-   "link_count": 5,
+   "label": "Leasing & Tenants",
+   "link_count": 3,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -74,28 +55,8 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Meter Reading",
-   "link_count": 0,
-   "link_to": "Meter Reading",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Issue",
-   "link_count": 0,
-   "link_to": "Issue",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Property Management",
-   "link_count": 7,
+   "label": "Property Operations",
+   "link_count": 6,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -106,6 +67,16 @@
    "label": "Utility Property",
    "link_count": 0,
    "link_to": "Utility Property",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Unit Swap Request",
+   "link_count": 0,
+   "link_to": "Unit Swap Request",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -133,9 +104,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Utility Property Feature",
+   "label": "Facility Booking",
    "link_count": 0,
-   "link_to": "Utility Property Feature",
+   "link_to": "Facility Booking",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -143,9 +114,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Asset",
+   "label": "Issue",
    "link_count": 0,
-   "link_to": "Asset",
+   "link_to": "Issue",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -153,31 +124,21 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Insurance",
-   "link_count": 0,
-   "link_to": "Insurance",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Contract",
-   "link_count": 0,
-   "link_to": "Contract",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Billing & Transactions",
-   "link_count": 6,
+   "label": "Billing & Financials",
+   "link_count": 4,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Meter Reading",
+   "link_count": 0,
+   "link_to": "Meter Reading",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   },
   {
    "hidden": 0,
@@ -212,41 +173,60 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Price List",
-   "link_count": 0,
-   "link_to": "Price List",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Item Price",
-   "link_count": 0,
-   "link_to": "Item Price",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Item",
-   "link_count": 0,
-   "link_to": "Item",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Rules and Structure",
-   "link_count": 4,
+   "label": "Legal & Compliance",
+   "link_count": 3,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Property Rule",
+   "link_count": 0,
+   "link_to": "Property Rule",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Legal Dispute",
+   "link_count": 0,
+   "link_to": "Legal Dispute",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "PMS Communication Log",
+   "link_count": 0,
+   "link_to": "PMS Communication Log",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Settings & Rules",
+   "link_count": 6,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Utility Billing Settings",
+   "link_count": 0,
+   "link_to": "Utility Billing Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   },
   {
    "hidden": 0,
@@ -291,8 +271,18 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Price List",
+   "link_count": 0,
+   "link_to": "Price List",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Reports",
-   "link_count": 5,
+   "link_count": 7,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -346,6 +336,26 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Late Payments",
+   "link_count": 0,
+   "link_to": "Late Payments",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Maintenance Performance",
+   "link_count": 0,
+   "link_to": "Maintenance Performance",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
  "modified": "2025-08-15 15:01:12.378208",
@@ -360,9 +370,6 @@
  "roles": [
   {
    "role": "All"
-  },
-  {
-   "role": "Accounts User"
   }
  ],
  "sequence_id": 29.0,
@@ -370,16 +377,15 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Utility Billing Settings",
-   "link_to": "Utility Billing Settings",
+   "label": "Utility Service Request",
+   "link_to": "Utility Service Request",
    "type": "DocType"
   },
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Utility Service Request",
-   "link_to": "Utility Service Request",
-   "stats_filter": "[]",
+   "label": "Contract",
+   "link_to": "Contract",
    "type": "DocType"
   },
   {
@@ -387,7 +393,6 @@
    "doc_view": "List",
    "label": "Meter Reading",
    "link_to": "Meter Reading",
-   "stats_filter": "[]",
    "type": "DocType"
   },
   {
@@ -395,9 +400,8 @@
    "doc_view": "List",
    "label": "Utility Property",
    "link_to": "Utility Property",
-   "stats_filter": "[]",
    "type": "DocType"
   }
  ],
- "title": "Utility and Rental"
+ "title": "The Signature Residence - PMS"
 }

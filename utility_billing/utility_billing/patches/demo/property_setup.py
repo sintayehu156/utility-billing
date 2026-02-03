@@ -23,7 +23,7 @@ def _delete_linked_documents(doctype_to_delete: str, link_field: str, asset_name
                 doc.cancel()
             frappe.delete_doc(doctype_to_delete, doc_data.name, ignore_permissions=True)
         except Exception as e:
-            frappe.db.rollback() 
+            frappe.db.rollback()
             frappe.log_error(f"Error deleting {doctype_to_delete} {doc_data.name} linked to Asset {asset_name}: {e}")
 
 def _delete_item_if_solely_linked_to_asset(item_code: str, asset_name: str, demo_company: str) -> None:
@@ -40,9 +40,9 @@ def _delete_item_if_solely_linked_to_asset(item_code: str, asset_name: str, demo
             "item_code": item_code,
             "company": demo_company,
             "name": ["!=", asset_name],
-            "docstatus": ["<", 2] 
+            "docstatus": ["<", 2]
         },
-        limit=1 
+        limit=1
     )
 
     if not other_assets_with_this_item:
@@ -70,7 +70,7 @@ def delete_assets() -> None:
     demo_assets = frappe.get_all(
         "Asset",
         filters={"company": demo_company},
-        fields=["name", "docstatus", "item_code"] 
+        fields=["name", "docstatus", "item_code"]
     )
 
     if not demo_assets:
@@ -95,7 +95,7 @@ def delete_assets() -> None:
             asset_doc = frappe.get_doc("Asset", asset_name)
             if asset_doc.docstatus == 1:
                 asset_doc.cancel()
-                
+
             frappe.delete_doc("Asset", asset_name, ignore_permissions=True)
 
             _delete_item_if_solely_linked_to_asset(item_code, asset_name, demo_company)
